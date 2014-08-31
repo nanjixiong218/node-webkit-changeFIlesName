@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Hello World!</title>
+</head>
+<body>
+<h1>Hello World!</h1>
+We are using node.js <script>document.write(process.version)</script>
+<div id="mytest">
+	click me!
+</div>
+<script type="text/javascript">
+	window.onload = function(){
+		alert(1);	
+		var mytest = document.getElementById("mytest");
+		mytest.onclick = function () {
+			alert(2);	
+		}
+	}
+
+</script>
+</body>
+</html>
