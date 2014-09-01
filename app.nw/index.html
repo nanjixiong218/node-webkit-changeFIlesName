@@ -6,14 +6,17 @@
 <h1>Hello World!</h1>
 We are using node.js <script>document.write(process.version)</script>
 <div id="mytest">
-	click me!
+    文件路径:<input id="path" type="text" />
+    <input type="BUTTON" id="click"/>
 </div>
 <script type="text/javascript">
+    var fs = require("fs");
 	window.onload = function(){
-		alert(1);	
-		var mytest = document.getElementById("mytest");
-		mytest.onclick = function () {
-			alert(2);	
+		var cli = document.getElementById("click");
+		cli.onclick = function () {
+            var path = document.getElementById("path");
+            var file = fs.readFileSync(path.value); 
+			alert(file);	
 		}
 	}
 
