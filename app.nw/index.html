@@ -1,21 +1,39 @@
 <html>
 <head>
+    <meta charset="utf-8"/>
     <title>Hello World!</title>
+    <style type="text/css" >
+#file{
+    width:0;
+    height:0;
+} 
+    </style>
 </head>
 <body>
 <h1>Hello World!</h1>
 We are using node.js <script>document.write(process.version)</script>
 <div id="mytest">
-    文件路径:<input id="path" type="text" />
-    <input type="BUTTON" id="click"/>
+    <input type="file" id="file"/>
+    <input type="BUTTON" id="chooseFile" value="选择文件"/>
+    <input type="text" readonly=true id="fileText" value="未选择文本"/>
+    <input type="BUTTON" id="click" value="alert文件内容"/>
 </div>
 <script type="text/javascript">
     var fs = require("fs");
 	window.onload = function(){
 		var cli = document.getElementById("click");
+        var chooseFile = document.getElementById("chooseFile");
+
+        var fileCtrl = document.getElementById("file");
+        fileCtrl.onchange = function (){
+            document.getElementById("fileText").value=document.getElementById("file").value;
+        }
+        chooseFile.onclick = function(){
+           fileCtrl.click();
+        }
 		cli.onclick = function () {
-            var path = document.getElementById("path");
-            var file = fs.readFileSync(path.value); 
+            var path = document.getElementById("file");
+            var file = fs.readFileSync(path.value,"utf-8"); 
 			alert(file);	
 		}
 	}
