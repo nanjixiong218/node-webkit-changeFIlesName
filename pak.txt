@@ -1,0 +1,3 @@
+1、先把app.nw文件夹内的东西用zip压缩，打包成app.nw文件；
+2、app.nw和nw.exe通过语句：copy /b nw.exe+app.nw app.exe得到app.exe文件；
+3、把app.exe和所需要的dll和nw.apk压缩到一起； 
