@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
+
         watch: {
             run : {
                 files: 'app.nw/*',
@@ -19,7 +20,10 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['watch']);
 
     grunt.registerTask('run', 'Run node-webkit app', function () {
-        exec('nw app.nw');
+        exec('nw .');
+    });
+    grunt.registerTask('pkg','pkg to exe',function(){
+
     });
 
 };
