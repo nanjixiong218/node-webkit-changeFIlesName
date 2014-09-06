@@ -21,7 +21,7 @@
       "url": "https://github.com/nanjixiong218/node-webkit-changeFIlesName/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "app.nw/index.html",
+  "main": "app.nw/changeFilesName.html",
   "engines": {
     "node": ">= 0.8.0"
   },
