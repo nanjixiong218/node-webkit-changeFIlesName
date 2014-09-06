@@ -28,16 +28,17 @@
              alert("ok");
         }
         */
-        //等价的异步操作,顺序执行，文件会莫名其妙变少
+        //等价的异步操作,顺序执行，注意重名覆盖问题
         fs.stat(dirPath,function (err,status) {
             if(status.isDirectory()){
                 fs.readdir(dirPath,function(err,files){
+
                     (function next(i){
                         if(i<files.length){
                             console.log(files.length);
                             console.log(i);
                             var oldName = path.join(dirPath,files[i]);
-                            var newName = path.join(dirPath,"xu"+i+".jpg");
+                            var newName = path.join(dirPath,Date.now()+".jpg");
                             fs.rename(oldName,newName,function(err){
                                 if(err){
                                     console.log(err);
@@ -46,7 +47,25 @@
                                 }
                             });
                         }else{
-                            alert("ok");
+                            fs.readdir(dirPath,function(err,files){
+                                (function next(i){
+                                    if(i<files.length) {
+                                        console.log(files.length);
+                                        console.log(i);
+                                        var oldName = path.join(dirPath, files[i]);
+                                        var newName = path.join(dirPath, "xu" + i + ".jpg");
+                                        fs.rename(oldName, newName, function (err) {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                next(++i);
+                                            }
+                                        });
+                                    }else{
+                                        alert("ok");
+                                    }
+                                })(0);
+                            });
                         }
 
                     }(0));
