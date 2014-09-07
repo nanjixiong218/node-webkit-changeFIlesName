@@ -76,10 +76,11 @@
             }
         })
         */
+        /*
         //这种异步才是真正的利用了异步，注意如果直接用时间戳会出现重名问题，
         // 同一时间戳可能已经完成数个文件的重命名，所以用到了时间戳加序号的方式
         //但是大家已经看出这种代码是多么的难看了！
-        //这种用IIFE闭包的方式可以替换为forEach吧
+        //这种用IIFE闭包的方式可以替换为forEach吧。
         fs.stat(dirPath,function (err,status) {
             if(status.isDirectory()){
                 fs.readdir(dirPath,function(err,files){
@@ -136,7 +137,53 @@
 
                 });
             }
+        });
+        */
+        /*forEach改写next闭包
+        fs.stat(dirPath,function (err,status) {
+            if(status.isDirectory()){
+                fs.readdir(dirPath,function(err,files){
+                    var times = 0;
+                    files.forEach(function(file,i){
+                            console.log(files.length);
+                            console.log(i);
+                            var oldName = path.join(dirPath,file);
+                            var newName = path.join(dirPath,Date.now()+i+".jpg");
+                            fs.rename(oldName,newName,function(err){
+                                if(err){
+                                    console.log(err);
+                                }else{
+
+                                    if(times==files.length-1){
+                                        //这里是所有异步接受之后的操作
+                                        fs.readdir(dirPath,function(err,files){
+                                            var times = 0 ;
+                                            files.forEach(function(file,i){
+                                                    var oldName = path.join(dirPath,file);
+                                                    var newName = path.join(dirPath,"xu"+i+".jpg");
+                                                    fs.rename(oldName,newName,function(err){
+                                                        if(err){
+                                                            console.log(err);
+                                                        }else{
+                                                            if(times==files.length-1){
+                                                                alert("over!");
+                                                            }else{
+                                                                times++;
+                                                            }
+                                                        }
+                                                    });
+                                            });
+                                        });
+                                    }else{
+                                        times++;
+                                    }
+                                }
+                            });
+                    });
+                });
+            }
         })
+        */
     });
 };
 window.onload = loaded;
