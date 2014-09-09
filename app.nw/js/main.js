@@ -6,9 +6,6 @@
     var path = require("path");
     var when = require("when");
     var chooseFile = $("#chooseFile");
-    var chooseExt = $(":checkbox[name='changedExt']");
-    var fileNamePre = $(":text[name='fileNamePre']");
-    var fileNameExt = $(":radio[name='fileNameExt']");
     var beginBtn = $("#begin");
     var dirPath;
 
@@ -18,6 +15,23 @@
     });
 
     beginBtn.on("click", function () {
+
+        var chooseExt = $(":checkbox[name='changedExt']:checked");
+        var chooseExtArr = [];
+        for(var i = 0,len=chooseExt.length;i<len;i++){
+            chooseExtArr.push(chooseExt[i].value);
+        }
+        function isWithExt(file){
+            var result =false;
+            chooseExtArr.forEach(function(ext){
+                if(file.indexOf("."+ext)!=-1){
+                    result = true;
+                }
+            });
+            return result;
+        }
+        var fileNamePre = $(":text[name='fileNamePre']");
+        var fileNameExt = $(":radio[name='fileNameExt']:checked");
         /*
         //同步操作
         if (fs.statSync(dirPath).isDirectory()) {
@@ -147,15 +161,23 @@
         */
         //forEach改写next IIFE形成第一版
         fs.stat(dirPath,function (err,status) {
+            if(err){
+                console.log(err);
+                return;
+            }
             if(status.isDirectory()){
                 fs.readdir(dirPath,function(err,files){
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
                     var times = 0;
                     files.forEach(function(file,i){
-                            console.log(files.length);
-                            console.log(i);
-                            if(file.indexOf("."+chooseExt.val())!=-1){
+                            //console.log(files.length);//奇怪，为什么这里用console.log开始报错了？
+                            //console.log(i);
+                            if(isWithExt(file)){
                                 var oldName = path.join(dirPath,file);
-                                var newName = path.join(dirPath,Date.now()+i+".jpg");
+                                var newName = path.join(dirPath,Date.now()+i+"."+chooseExt.val());
                                 fs.rename(oldName,newName,function(err){
                                     if(err){
                                         console.log(err);
@@ -167,7 +189,7 @@
                                             fs.readdir(dirPath,function(err,files){
                                                 var times = 0 ;
                                                 files.forEach(function(file,i){
-                                                    if(file.indexOf("."+chooseExt.val())!=-1){
+                                                    if(isWithExt(file)){
                                                         var oldName = path.join(dirPath,file);
                                                         var newName = path.join(dirPath,fileNamePre.val()+i+"."+fileNameExt.val());
                                                         fs.rename(oldName,newName,function(err){
