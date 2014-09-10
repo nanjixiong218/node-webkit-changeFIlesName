@@ -268,8 +268,23 @@
             });
             return deferred.promise;
         };
+        var renameFilesToDateTime = function (files) {
+            var deferreds = files.map(function(file,i){
+                var oldName = "";
+                var newName = "";
+                if(isWithExt(file)) {
+                    oldName = path.join(dirPath, file);
+                    newName = path.join(dirPath, Date.now() + i + "." + chooseExt.val());
+                }else{
+                    oldName = path.join(dirPath, file);
+                    newName = path.join(dirPath, file);
+                }
+                return fRename(oldName,newName);
+            });
+            return deferreds;
+        };
         var renameFiles = function (files) {
-            var deferreds = files.map(function(file){
+            var deferreds = files.map(function(file,i){
                 var oldName = "";
                 var newName = "";
                 if(isWithExt(file)) {
@@ -279,7 +294,7 @@
                     oldName = path.join(dirPath, file);
                     newName = path.join(dirPath, file);
                 }
-                return fRename(file);
+                return fRename(oldName,newName);
             });
             return deferreds;
         };
@@ -292,13 +307,44 @@
                 }
             })
         };
-        when.all(
-            getFiles().then(renameFiles)
-        ).then(function(){
-            alert("over!");
-        }).otherwise(function(err){
+        /*when.all这两种用法都可以,感觉第一种更直观
+        getFiles()
+           .then(function(files){
+               return when.all(renameFiles(files));
+           })
+           .then(function(){
+                 alert("over!");
+           })
+           .otherwise(function(err){
             alert(err);
-        });
+           });
+
+
+        when.all(getFiles().then(renameFiles))
+            .then(function(){
+                alert("over!");
+            })
+            .otherwise(function(err){
+                alert(err);
+            });
+        */
+
+        getFiles()
+            .then(function(files){
+                return when.all(renameFilesToDateTime(files));
+            })
+            .then(function(){
+                return getFiles();
+            })
+            .then(function(files){
+                return when.all(renameFiles(files));
+            })
+            .then(function(){
+                alert("over!");
+            })
+            .otherwise(function(err){
+                alert(err);
+            });
     });
 };
 window.onload = loaded;
