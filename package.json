@@ -28,7 +28,7 @@
   "window": {
     "title": "node-webkit demo",
     "icon": "link.png",
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "resizable":false,
     "width": 1000,

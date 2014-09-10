@@ -2,6 +2,7 @@
  * Created by xu on 2014/9/5.
  */
  var loaded = function() {
+    var when = require("when");
     var fs = require("fs");
     var path = require("path");
     var chooseFile = $("#chooseFile");
@@ -158,6 +159,7 @@
             }
         });
         */
+        /*
         //forEach改写next IIFE形成第一版
         fs.stat(dirPath,function (err,status) {
             if(err){
@@ -230,10 +232,73 @@
                 });
             }
         })
-
+        */
         //最佳方案，用promise或者用一些流行异步解决方案库，比如proxy，async，when,then等
         //这里选择whenjs
-
+        var fStat = function (){
+            var deferred = when.defer();
+            fs.stat(dirPath,function (err,status){
+                if(err){
+                    deferred.reject(err);
+                }else{
+                    deferred.resolve(status);
+                }
+            });
+            return deferred.promise;
+        };
+        var fReadDir = function () {
+            var deferred = when.defer();
+            fs.readdir(dirPath,function(err,files){
+                if(err){
+                    deferred.reject(err);
+                }else{
+                    deferred.resolve(files);
+                }
+            });
+            return deferred.promise;
+        };
+        var fRename = function (oldname,newname){
+            var deferred = when.defer();
+            fs.rename(oldname,newname,function(err){
+                if(err){
+                    deferred.reject(err);
+                }else{
+                    deferred.resolve(null);
+                }
+            });
+            return deferred.promise;
+        };
+        var renameFiles = function (files) {
+            var deferreds = files.map(function(file){
+                var oldName = "";
+                var newName = "";
+                if(isWithExt(file)) {
+                    oldName = path.join(dirPath, file);
+                    newName = path.join(dirPath, fileNamePre.val() + i + "." + fileNameExt.val());
+                }else{
+                    oldName = path.join(dirPath, file);
+                    newName = path.join(dirPath, file);
+                }
+                return fRename(file);
+            });
+            return deferreds;
+        };
+        var getFiles = function () {
+            return fStat(dirPath).then(function(status){
+                if(status.isDirectory()){
+                    return fReadDir(dirPath);
+                }else{
+                    throw new Error("不是目录！");
+                }
+            })
+        };
+        when.all(
+            getFiles().then(renameFiles)
+        ).then(function(){
+            alert("over!");
+        }).otherwise(function(err){
+            alert(err);
+        });
     });
 };
 window.onload = loaded;
