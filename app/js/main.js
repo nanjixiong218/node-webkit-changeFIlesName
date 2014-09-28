@@ -235,6 +235,8 @@
         */
         //最佳方案，用promise或者用一些流行异步解决方案库，比如proxy，async，when,then等
         //这里选择whenjs
+
+        //封装异步方法为promise形式
         var fStat = function (){
             var deferred = when.defer();
             fs.stat(dirPath,function (err,status){
@@ -328,7 +330,7 @@
                 alert(err);
             });
         */
-
+        //启动异步执行
         getFiles()
             .then(function(files){
                 return when.all(renameFilesToDateTime(files));
